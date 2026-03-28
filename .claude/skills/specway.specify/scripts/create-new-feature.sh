@@ -6,6 +6,7 @@ JSON_MODE=false
 SHORT_NAME=""
 BRANCH_NUMBER=""
 USE_TIMESTAMP=false
+TEMPLATE_PATH=""
 ARGS=()
 i=1
 while [ $i -le $# ]; do
@@ -44,14 +45,28 @@ while [ $i -le $# ]; do
         --timestamp)
             USE_TIMESTAMP=true
             ;;
+        --template)
+            if [ $((i + 1)) -gt $# ]; then
+                echo 'Error: --template requires a value' >&2
+                exit 1
+            fi
+            i=$((i + 1))
+            next_arg="${!i}"
+            if [[ "$next_arg" == --* ]]; then
+                echo 'Error: --template requires a value' >&2
+                exit 1
+            fi
+            TEMPLATE_PATH="$next_arg"
+            ;;
         --help|-h)
-            echo "Usage: $0 [--json] [--short-name <name>] [--number N] [--timestamp] <feature_description>"
+            echo "Usage: $0 [--json] [--short-name <name>] [--number N] [--timestamp] [--template <path>] <feature_description>"
             echo ""
             echo "Options:"
             echo "  --json              Output in JSON format"
             echo "  --short-name <name> Provide a custom short name (2-4 words) for the branch"
             echo "  --number N          Specify branch number manually (overrides auto-detection)"
             echo "  --timestamp         Use timestamp prefix (YYYYMMDD-HHMMSS) instead of sequential numbering"
+            echo "  --template <path>   Path to spec template file"
             echo "  --help, -h          Show this help message"
             echo ""
             echo "Examples:"
@@ -158,7 +173,7 @@ clean_branch_name() {
     echo "$name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//'
 }
 
-# Resolve repository root using common.sh functions which prioritize .specify over git
+# Resolve repository root using common.sh functions which prioritize specway skills over git
 SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
@@ -305,10 +320,9 @@ fi
 FEATURE_DIR="$SPECS_DIR/$BRANCH_NAME"
 mkdir -p "$FEATURE_DIR"
 
-TEMPLATE=$(resolve_template "spec-template" "$REPO_ROOT") || true
 SPEC_FILE="$FEATURE_DIR/spec.md"
-if [ -n "$TEMPLATE" ] && [ -f "$TEMPLATE" ]; then
-    cp "$TEMPLATE" "$SPEC_FILE"
+if [ -n "$TEMPLATE_PATH" ] && [ -f "$TEMPLATE_PATH" ]; then
+    cp "$TEMPLATE_PATH" "$SPEC_FILE"
 else
     echo "Warning: Spec template not found; created empty spec file" >&2
     touch "$SPEC_FILE"

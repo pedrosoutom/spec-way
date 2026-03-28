@@ -50,7 +50,7 @@ set -o pipefail
 
 # Get script directory and load common functions
 SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/common.sh"
+source "$SCRIPT_DIR/../../specway.specify/scripts/common.sh"
 
 # Get all paths and variables from common functions
 _paths_output=$(get_feature_paths) || { echo "ERROR: Failed to resolve feature paths" >&2; exit 1; }
@@ -87,8 +87,8 @@ KIMI_FILE="$REPO_ROOT/KIMI.md"
 TRAE_FILE="$REPO_ROOT/.trae/rules/AGENTS.md"
 IFLOW_FILE="$REPO_ROOT/IFLOW.md"
 
-# Template file
-TEMPLATE_FILE="$REPO_ROOT/.specify/templates/agent-file-template.md"
+# Template file (co-located with this script in the plan skill)
+TEMPLATE_FILE="$SCRIPT_DIR/../templates/agent-file-template.md"
 
 # Global variables for parsed plan data
 NEW_LANG=""

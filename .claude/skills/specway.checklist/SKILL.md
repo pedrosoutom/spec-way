@@ -33,7 +33,13 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Execution Steps
 
-1. **Setup**: Run `.specify/scripts/bash/check-prerequisites.sh --json` from repo root and parse JSON for FEATURE_DIR and AVAILABLE_DOCS list.
+1. **Resolve feature context**:
+   - Get current branch: run `git branch --show-current` (or use `$SPECIFY_FEATURE` env var if set)
+   - Feature directory is at `specs/<branch-name>/` from repo root
+     - If branch has a numeric prefix (e.g., `004-`), search `specs/` for a directory matching that prefix
+   - Verify the feature directory exists (if not: ERROR — run `/specway.specify` first)
+   - Verify `plan.md` exists in the feature directory (if not: ERROR — run `/specway.plan` first)
+   - Note which optional docs exist: `research.md`, `data-model.md`, `contracts/`, `quickstart.md`, `tasks.md`
    - All file paths must be absolute.
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
@@ -204,7 +210,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - ✅ "Are [edge cases/scenarios] addressed in requirements?"
    - ✅ "Does the spec define [missing aspect]?"
 
-6. **Structure Reference**: Generate the checklist following the canonical template in `.specify/templates/checklist-template.md` for title, meta section, category headings, and ID formatting. If template is unavailable, use: H1 title, purpose/created meta lines, `##` category sections containing `- [ ] CHK### <requirement item>` lines with globally incrementing IDs starting at CHK001.
+6. **Structure Reference**: Generate the checklist following the canonical template in `${CLAUDE_SKILL_DIR}/templates/checklist-template.md` for title, meta section, category headings, and ID formatting. If template is unavailable, use: H1 title, purpose/created meta lines, `##` category sections containing `- [ ] CHK### <requirement item>` lines with globally incrementing IDs starting at CHK001.
 
 7. **Report**: Output full path to checklist file, item count, and summarize whether the run created a new file or appended to an existing one. Summarize:
    - Focus areas selected

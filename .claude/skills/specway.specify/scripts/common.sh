@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Common functions and variables for all scripts
+# Common functions and variables for all specway scripts
 
-# Find repository root by searching upward for .specify directory
-# This is the primary marker for spec-kit projects
-find_specify_root() {
+# Find repository root by searching upward for specway skills directory
+# This is the primary marker for specway projects
+find_specway_root() {
     local dir="${1:-$(pwd)}"
     # Normalize to absolute path to prevent infinite loop with relative paths
     # Use -- to handle paths starting with - (e.g., -P, -L)
     dir="$(cd -- "$dir" 2>/dev/null && pwd)" || return 1
     local prev_dir=""
     while true; do
-        if [ -d "$dir/.specify" ]; then
+        if [ -d "$dir/.claude/skills/specway.specify" ]; then
             echo "$dir"
             return 0
         fi
@@ -24,17 +24,17 @@ find_specify_root() {
     return 1
 }
 
-# Get repository root, prioritizing .specify directory over git
-# This prevents using a parent git repo when spec-kit is initialized in a subdirectory
+# Get repository root, prioritizing specway skills directory over git
+# This prevents using a parent git repo when specway is initialized in a subdirectory
 get_repo_root() {
-    # First, look for .specify directory (spec-kit's own marker)
-    local specify_root
-    if specify_root=$(find_specify_root); then
-        echo "$specify_root"
+    # First, look for specway skills (specway's own marker)
+    local specway_root
+    if specway_root=$(find_specway_root); then
+        echo "$specway_root"
         return
     fi
 
-    # Fallback to git if no .specify found
+    # Fallback to git if no specway skills found
     if git rev-parse --show-toplevel >/dev/null 2>&1; then
         git rev-parse --show-toplevel
         return
@@ -53,7 +53,7 @@ get_current_branch() {
         return
     fi
 
-    # Then check git if available at the spec-kit root (not parent)
+    # Then check git if available at the specway root (not parent)
     local repo_root=$(get_repo_root)
     if has_git; then
         git -C "$repo_root" rev-parse --abbrev-ref HEAD
@@ -101,7 +101,7 @@ get_current_branch() {
     echo "main"  # Final fallback
 }
 
-# Check if we have git available at the spec-kit root level
+# Check if we have git available at the specway root level
 # Returns true only if git is installed and the repo root is inside a git work tree
 # Handles both regular repos (.git directory) and worktrees/submodules (.git file)
 has_git() {
@@ -120,7 +120,7 @@ check_feature_branch() {
 
     # For non-git repos, we can't enforce branch naming but still provide output
     if [[ "$has_git_repo" != "true" ]]; then
-        echo "[specify] Warning: Git repository not detected; skipped branch validation" >&2
+        echo "[specway] Warning: Git repository not detected; skipped branch validation" >&2
         return 0
     fi
 
@@ -227,9 +227,6 @@ json_escape() {
     s="${s//$'\b'/\\b}"
     s="${s//$'\f'/\\f}"
     # Escape any remaining U+0001-U+001F control characters as \uXXXX.
-    # (U+0000/NUL cannot appear in bash strings and is excluded.)
-    # LC_ALL=C ensures ${#s} counts bytes and ${s:$i:1} yields single bytes,
-    # so multi-byte UTF-8 sequences (first byte >= 0xC0) pass through intact.
     local LC_ALL=C
     local i char code
     for (( i=0; i<${#s}; i++ )); do
@@ -245,86 +242,3 @@ json_escape() {
 
 check_file() { [[ -f "$1" ]] && echo "  ✓ $2" || echo "  ✗ $2"; }
 check_dir() { [[ -d "$1" && -n $(ls -A "$1" 2>/dev/null) ]] && echo "  ✓ $2" || echo "  ✗ $2"; }
-
-# Resolve a template name to a file path using the priority stack:
-#   1. .specify/templates/overrides/
-#   2. .specify/presets/<preset-id>/templates/ (sorted by priority from .registry)
-#   3. .specify/extensions/<ext-id>/templates/
-#   4. .specify/templates/ (core)
-resolve_template() {
-    local template_name="$1"
-    local repo_root="$2"
-    local base="$repo_root/.specify/templates"
-
-    # Priority 1: Project overrides
-    local override="$base/overrides/${template_name}.md"
-    [ -f "$override" ] && echo "$override" && return 0
-
-    # Priority 2: Installed presets (sorted by priority from .registry)
-    local presets_dir="$repo_root/.specify/presets"
-    if [ -d "$presets_dir" ]; then
-        local registry_file="$presets_dir/.registry"
-        if [ -f "$registry_file" ] && command -v python3 >/dev/null 2>&1; then
-            # Read preset IDs sorted by priority (lower number = higher precedence).
-            # The python3 call is wrapped in an if-condition so that set -e does not
-            # abort the function when python3 exits non-zero (e.g. invalid JSON).
-            local sorted_presets=""
-            if sorted_presets=$(SPECKIT_REGISTRY="$registry_file" python3 -c "
-import json, sys, os
-try:
-    with open(os.environ['SPECKIT_REGISTRY']) as f:
-        data = json.load(f)
-    presets = data.get('presets', {})
-    for pid, meta in sorted(presets.items(), key=lambda x: x[1].get('priority', 10)):
-        print(pid)
-except Exception:
-    sys.exit(1)
-" 2>/dev/null); then
-                if [ -n "$sorted_presets" ]; then
-                    # python3 succeeded and returned preset IDs — search in priority order
-                    while IFS= read -r preset_id; do
-                        local candidate="$presets_dir/$preset_id/templates/${template_name}.md"
-                        [ -f "$candidate" ] && echo "$candidate" && return 0
-                    done <<< "$sorted_presets"
-                fi
-                # python3 succeeded but registry has no presets — nothing to search
-            else
-                # python3 failed (missing, or registry parse error) — fall back to unordered directory scan
-                for preset in "$presets_dir"/*/; do
-                    [ -d "$preset" ] || continue
-                    local candidate="$preset/templates/${template_name}.md"
-                    [ -f "$candidate" ] && echo "$candidate" && return 0
-                done
-            fi
-        else
-            # Fallback: alphabetical directory order (no python3 available)
-            for preset in "$presets_dir"/*/; do
-                [ -d "$preset" ] || continue
-                local candidate="$preset/templates/${template_name}.md"
-                [ -f "$candidate" ] && echo "$candidate" && return 0
-            done
-        fi
-    fi
-
-    # Priority 3: Extension-provided templates
-    local ext_dir="$repo_root/.specify/extensions"
-    if [ -d "$ext_dir" ]; then
-        for ext in "$ext_dir"/*/; do
-            [ -d "$ext" ] || continue
-            # Skip hidden directories (e.g. .backup, .cache)
-            case "$(basename "$ext")" in .*) continue;; esac
-            local candidate="$ext/templates/${template_name}.md"
-            [ -f "$candidate" ] && echo "$candidate" && return 0
-        done
-    fi
-
-    # Priority 4: Core templates
-    local core="$base/${template_name}.md"
-    [ -f "$core" ] && echo "$core" && return 0
-
-    # Template not found in any location.
-    # Return 1 so callers can distinguish "not found" from "found".
-    # Callers running under set -e should use: TEMPLATE=$(resolve_template ...) || true
-    return 1
-}
-

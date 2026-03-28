@@ -22,11 +22,12 @@ Note: This clarification workflow is expected to run (and be completed) BEFORE i
 
 Execution steps:
 
-1. Run `.specify/scripts/bash/check-prerequisites.sh --json --paths-only` from repo root **once** (combined `--json --paths-only` mode / `-Json -PathsOnly`). Parse minimal JSON payload fields:
-   - `FEATURE_DIR`
-   - `FEATURE_SPEC`
-   - (Optionally capture `IMPL_PLAN`, `TASKS` for future chained flows.)
-   - If JSON parsing fails, abort and instruct user to re-run `/specway.specify` or verify feature branch environment.
+1. **Resolve feature context**:
+   - Get current branch: run `git branch --show-current` (or use `$SPECIFY_FEATURE` env var if set)
+   - Feature directory is at `specs/<branch-name>/` from repo root
+     - If branch has a numeric prefix (e.g., `004-`), search `specs/` for a directory matching that prefix
+   - Derive paths: FEATURE_SPEC = `<feature-dir>/spec.md`, IMPL_PLAN = `<feature-dir>/plan.md`, TASKS = `<feature-dir>/tasks.md`
+   - If FEATURE_SPEC does not exist, abort and instruct user to run `/specway.specify` first.
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
 2. Load the current spec file. Perform a structured ambiguity & coverage scan using this taxonomy. For each category, mark status: Clear / Partial / Missing. Produce an internal coverage map used for prioritization (do not output raw map unless no questions will be asked).

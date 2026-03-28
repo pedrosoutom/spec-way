@@ -13,7 +13,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 ## Pre-Execution Checks
 
 **Check for extension hooks (before implementation)**:
-- Check if `.specify/extensions.yml` exists in the project root.
+- Check if `.specway/extensions.yml` exists in the project root.
 - If it exists, read it and look for entries under the `hooks.before_implement` key
 - If the YAML cannot be parsed or is invalid, skip hook checking silently and continue normally
 - Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
@@ -42,11 +42,19 @@ You **MUST** consider the user input before proceeding (if not empty).
     
     Wait for the result of the hook command before proceeding to the Outline.
     ```
-- If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
+- If no hooks are registered or `.specway/extensions.yml` does not exist, skip silently
 
 ## Outline
 
-1. Run `.specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Resolve feature context**:
+   - Get current branch: run `git branch --show-current` (or use `$SPECIFY_FEATURE` env var if set)
+   - Feature directory is at `specs/<branch-name>/` from repo root
+     - If branch has a numeric prefix (e.g., `004-`), search `specs/` for a directory matching that prefix
+   - Verify the feature directory exists (if not: ERROR — run `/specway.specify` first)
+   - Verify `plan.md` exists in the feature directory (if not: ERROR — run `/specway.plan` first)
+   - Verify `tasks.md` exists in the feature directory (if not: ERROR — run `/specway.tasks` first)
+   - Note which optional docs exist: `research.md`, `data-model.md`, `contracts/`, `quickstart.md`, `tasks.md`
+   - All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
 2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
    - Scan all checklist files in the checklists/ directory
@@ -168,7 +176,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/specway.tasks` first to regenerate the task list.
 
-10. **Check for extension hooks**: After completion validation, check if `.specify/extensions.yml` exists in the project root.
+10. **Check for extension hooks**: After completion validation, check if `.specway/extensions.yml` exists in the project root.
     - If it exists, read it and look for entries under the `hooks.after_implement` key
     - If the YAML cannot be parsed or is invalid, skip hook checking silently and continue normally
     - Filter out hooks where `enabled` is explicitly `false`. Treat hooks without an `enabled` field as enabled by default.
@@ -195,4 +203,4 @@ Note: This command assumes a complete task breakdown exists in tasks.md. If task
         Executing: `/{command}`
         EXECUTE_COMMAND: {command}
         ```
-    - If no hooks are registered or `.specify/extensions.yml` does not exist, skip silently
+    - If no hooks are registered or `.specway/extensions.yml` does not exist, skip silently

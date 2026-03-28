@@ -4,28 +4,37 @@ set -e
 
 # Parse command line arguments
 JSON_MODE=false
+TEMPLATE_PATH=""
 ARGS=()
 
-for arg in "$@"; do
+i=1
+while [ $i -le $# ]; do
+    arg="${!i}"
     case "$arg" in
-        --json) 
-            JSON_MODE=true 
+        --json)
+            JSON_MODE=true
             ;;
-        --help|-h) 
-            echo "Usage: $0 [--json]"
-            echo "  --json    Output results in JSON format"
-            echo "  --help    Show this help message"
-            exit 0 
+        --template)
+            i=$((i + 1))
+            TEMPLATE_PATH="${!i}"
             ;;
-        *) 
-            ARGS+=("$arg") 
+        --help|-h)
+            echo "Usage: $0 [--json] [--template <path>]"
+            echo "  --json            Output results in JSON format"
+            echo "  --template <path> Path to plan template file"
+            echo "  --help            Show this help message"
+            exit 0
+            ;;
+        *)
+            ARGS+=("$arg")
             ;;
     esac
+    i=$((i + 1))
 done
 
 # Get script directory and load common functions
 SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/common.sh"
+source "$SCRIPT_DIR/../../specway.specify/scripts/common.sh"
 
 # Get all paths and variables from common functions
 _paths_output=$(get_feature_paths) || { echo "ERROR: Failed to resolve feature paths" >&2; exit 1; }
@@ -39,9 +48,8 @@ check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
 mkdir -p "$FEATURE_DIR"
 
 # Copy plan template if it exists
-TEMPLATE=$(resolve_template "plan-template" "$REPO_ROOT") || true
-if [[ -n "$TEMPLATE" ]] && [[ -f "$TEMPLATE" ]]; then
-    cp "$TEMPLATE" "$IMPL_PLAN"
+if [[ -n "$TEMPLATE_PATH" ]] && [[ -f "$TEMPLATE_PATH" ]]; then
+    cp "$TEMPLATE_PATH" "$IMPL_PLAN"
     echo "Copied plan template to $IMPL_PLAN"
 else
     echo "Warning: Plan template not found"

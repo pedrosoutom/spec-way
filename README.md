@@ -2,7 +2,7 @@
 
 A specification-driven development workflow for software projects, implemented as a suite of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills.
 
-> **Work in progress** — Based on [Speckit](https://github.com/speckit/speckit), this repository is under constant refinement, incorporating additional references and real-world usage learnings over time.
+> Based on [Speckit](https://github.com/speckit/speckit), refined with real-world usage learnings.
 
 ## Overview
 
@@ -13,13 +13,44 @@ specway.specify → specway.clarify → specway.plan → specway.tasks → specw
                                                                   ↘ specway.taskstoissues
 ```
 
+Optional at any point: `/specway.analyze` (consistency check) and `/specway.checklist` (requirements quality validation).
+
+## Installation
+
+### Via npx skills (recommended)
+
+```bash
+npx skills add pedrosoutom/spec-way
+```
+
+This discovers all `specway.*` skills and installs them into your project's `.claude/skills/` directory.
+
+To install all skills at once without prompts:
+
+```bash
+npx skills add pedrosoutom/spec-way --all -y
+```
+
+### Manual
+
+Copy the skill directories from `.claude/skills/` into your project:
+
+```bash
+git clone https://github.com/pedrosoutom/spec-way.git /tmp/spec-way
+cp -r /tmp/spec-way/.claude/skills/specway.* your-project/.claude/skills/
+```
+
+### Prerequisites
+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+- Git
+
 ## Skills
 
 ### `/specway.constitution` — Project Principles
 
 Defines non-negotiable rules and principles for the project (e.g., mandatory TDD, simplicity, observability). Acts as a constitution that all other skills validate against.
 
-- Output: `.specify/memory/constitution.md`
 - Semantically versioned
 - Enforced during planning and analysis
 
@@ -94,23 +125,39 @@ Converts tasks into GitHub issues:
 
 ## Project Structure
 
-```
-.claude/
-  skills/              # Claude Code skills (slash commands)
-    specway.specify/
-    specway.clarify/
-    specway.plan/
-    specway.tasks/
-    specway.implement/
-    specway.analyze/
-    specway.checklist/
-    specway.constitution/
-    specway.taskstoissues/
+Each skill is self-contained with its own templates, scripts, and resources:
 
-.specify/
-  templates/           # Artifact templates (spec, plan, tasks, checklist, constitution)
-  scripts/bash/        # Utility scripts (feature creation, prerequisite checks, etc.)
-  memory/              # Constitution and persistent project context
+```
+.claude/skills/
+  specway.specify/
+    SKILL.md                          # Skill instructions
+    init-options.json                 # Branch numbering config
+    templates/spec-template.md        # Spec structure template
+    scripts/
+      common.sh                       # Shared utilities (single source of truth)
+      create-new-feature.sh           # Branch + directory creation
+  specway.plan/
+    SKILL.md
+    templates/
+      plan-template.md
+      agent-file-template.md          # AI agent context template
+    scripts/
+      setup-plan.sh                   # References common.sh from specway.specify
+      update-agent-context.sh         # Multi-agent context updater
+  specway.tasks/
+    SKILL.md
+    templates/tasks-template.md
+  specway.checklist/
+    SKILL.md
+    templates/checklist-template.md
+  specway.constitution/
+    SKILL.md
+    memory/constitution.md            # Project principles (persistent)
+    templates/constitution-template.md
+  specway.implement/SKILL.md
+  specway.clarify/SKILL.md
+  specway.analyze/SKILL.md
+  specway.taskstoissues/SKILL.md
 ```
 
 Per-feature artifacts are generated under:
@@ -127,36 +174,21 @@ specs/<branch-name>/
   checklists/          # Quality checklists
 ```
 
-## Getting Started
+## Usage
 
-### Prerequisites
-
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
-- Git
-- Bash
-
-### Usage
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/pedrosoutom/spec-way.git my-project
-cd my-project
-```
-
-2. (Optional) Configure the project constitution:
+1. (Optional) Configure the project constitution:
 
 ```
 /specway.constitution Define 3 principles: simplicity, test-first, observability
 ```
 
-3. Create a feature:
+2. Create a feature:
 
 ```
 /specway.specify I need an authentication system with email and password login
 ```
 
-4. Follow the flow:
+3. Follow the flow:
 
 ```
 /specway.clarify
