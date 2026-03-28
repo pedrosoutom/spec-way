@@ -140,7 +140,7 @@ specs/<branch-name>/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/pedrosouto/spec-way.git my-project
+git clone https://github.com/pedrosoutom/spec-way.git my-project
 cd my-project
 ```
 
