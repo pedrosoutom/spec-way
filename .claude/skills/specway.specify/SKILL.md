@@ -53,11 +53,62 @@ You **MUST** consider the user input before proceeding (if not empty).
     ```
 - If no hooks are registered or `.specway/extensions.yml` does not exist, skip silently
 
+## Discovery Conversation
+
+Before generating a spec, assess whether a discovery conversation is needed to capture the user's full vision.
+
+### Step 1: Assess project context
+
+- Check if `.claude/skills/specway.constitution/memory/constitution.md` has been filled in (does NOT still contain `[PROJECT_NAME]` placeholder tokens)
+- Check if any specs exist under `specs/` directory in the repo root
+- Check if a `README.md` exists at the repo root with substantive content (more than boilerplate)
+- Classify context as:
+  - **rich**: constitution filled AND existing specs
+  - **partial**: some context but not all
+  - **minimal**: no constitution, no specs, no meaningful README
+
+### Step 2: Decide whether to trigger discovery
+
+- **Trigger discovery** if context is `minimal` or `partial` AND the user's input is a short description (roughly one sentence / under ~50 words)
+- **Skip discovery** if context is `rich` OR the user provided a lengthy briefing (~100+ words with detailed context)
+- Use judgment — these are guidelines, not rigid thresholds
+
+### Step 3: Discovery conversation (when triggered)
+
+Acknowledge the user's description and explain that before generating a full spec, it would help to understand more about their vision.
+
+Suggest: *"If you'd like, you can use `/voice` to talk through your thinking — it's often faster for explaining context."*
+
+Present a guiding structure with open-ended topics and example responses. Explicitly say: **"You don't need to address all of these — share what feels relevant. Write freely, in any order."**
+
+Suggested topics:
+
+- **The problem / motivation**: "What problem does this solve? Who experiences it today?"
+  *(Example: "Our users currently have to manually export data to CSV, which takes 20 minutes per report...")*
+- **The vision**: "What does success look like when this is done?"
+  *(Example: "Users click one button and get a PDF report in their inbox within 30 seconds")*
+- **The users**: "Who will use this, and how? Any distinct user types?"
+  *(Example: "Admin users configure reports, regular users just receive them")*
+- **Scope and boundaries**: "What's explicitly in or out of scope for this version?"
+  *(Example: "V1 is email delivery only, no Slack integration yet")*
+- **Constraints or preferences**: "Anything the solution must or must not do?"
+  *(Example: "Must work offline, must not require a new database")*
+- **Existing context**: "Any related systems, past decisions, or prior art?"
+  *(Example: "We already have a reporting engine that generates the data, just not the delivery part")*
+
+Wait for the user's response. Their input (which may be long, unstructured, conversational) becomes the **enriched context** that feeds into spec generation.
+
+### Step 4: Synthesize discovery input
+
+After receiving the user's discovery response, internally synthesize it into a structured summary that maps to spec template sections. Do not show this summary to the user — use it to generate a richer spec.
+
+---
+
 ## Outline
 
 The text the user typed after `/specway.specify` in the triggering message **is** the feature description. Assume you always have it available in this conversation even if `$ARGUMENTS` appears literally below. Do not ask the user to repeat it unless they provided an empty command.
 
-Given that feature description, do this:
+Given that feature description (and discovery conversation input, if conducted), do this:
 
 1. **Generate a concise short name** (2-4 words) for the branch:
    - Analyze the feature description and extract the most meaningful keywords
@@ -96,8 +147,9 @@ Given that feature description, do this:
 
     1. Parse user description from Input
        If empty: ERROR "No feature description provided"
-    2. Extract key concepts from description
+    2. Extract key concepts from description AND discovery conversation input (if conducted)
        Identify: actors, actions, data, constraints
+       Prioritize information the user explicitly provided over inferred defaults
     3. For unclear aspects:
        - Make informed guesses based on context and industry standards
        - Only mark with [NEEDS CLARIFICATION: specific question] if:
@@ -105,6 +157,7 @@ Given that feature description, do this:
          - Multiple reasonable interpretations exist with different implications
          - No reasonable default exists
        - **LIMIT: Maximum 3 [NEEDS CLARIFICATION] markers total**
+       - If a discovery conversation was conducted, the threshold for [NEEDS CLARIFICATION] should be higher — the user has already provided rich context, so fewer ambiguities should remain
        - Prioritize clarifications by impact: scope > security/privacy > user experience > technical details
     4. Fill User Scenarios & Testing section
        If no clear user flow: ERROR "Cannot determine user scenarios"
@@ -118,7 +171,7 @@ Given that feature description, do this:
     7. Identify Key Entities (if data involved)
     8. Return: SUCCESS (spec ready for planning)
 
-5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
+5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) and discovery conversation (if conducted) while preserving section order and headings. If a discovery conversation was conducted, include a `## Discovery Context` section in the spec (after the header metadata, before User Scenarios) that summarizes the key points from the user's discovery input — their motivation, vision, constraints, and any context they shared. This section serves as a reference for the user's original intent throughout the development process.
 
 6. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
 

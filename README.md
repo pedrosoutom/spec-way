@@ -15,6 +15,16 @@ specway.specify → specway.clarify → specway.plan → specway.tasks → specw
 
 Optional at any point: `/specway.analyze` (consistency check) and `/specway.checklist` (requirements quality validation).
 
+## Changes from Speckit
+
+spec-way introduces several improvements over the original [Speckit](https://github.com/github/spec-kit) workflow:
+
+- **Discovery conversation**: `/specway.specify` detects when a project lacks context and initiates an open-ended conversation before generating the spec, capturing the user's vision, motivation, and constraints in their own words
+- **Open-ended clarification**: `/specway.clarify` uses conversational questions with suggested approaches instead of rigid multiple-choice, encouraging richer user input while still providing orientation
+- **Batch spec updates**: Clarification answers are accumulated in memory and applied to the spec in a single write at the end, keeping the conversation flow uninterrupted
+- **Voice-friendly**: Both specify and clarify suggest `/voice` mode for faster, richer input
+- **Skill-first architecture**: Everything is self-contained within `.claude/skills/` — no external directories or dependencies required
+
 ## Installation
 
 ### Via npx skills (recommended)
