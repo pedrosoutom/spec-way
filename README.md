@@ -2,7 +2,7 @@
 
 A specification-driven development workflow for software projects, implemented as a suite of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skills.
 
-> Based on [Speckit](https://github.com/speckit/speckit), refined with real-world usage learnings.
+> Based on [Speckit](https://github.com/github/spec-kit), refined with real-world usage learnings.
 
 ## Overview
 
