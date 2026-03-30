@@ -10,7 +10,7 @@ find_specway_root() {
     dir="$(cd -- "$dir" 2>/dev/null && pwd)" || return 1
     local prev_dir=""
     while true; do
-        if [ -d "$dir/.claude/skills/specway.specify" ]; then
+        if [ -d "$dir/.claude/skills/specway.product" ]; then
             echo "$dir"
             return 0
         fi

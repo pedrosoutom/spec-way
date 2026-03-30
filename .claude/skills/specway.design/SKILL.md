@@ -3,7 +3,7 @@ name: specway.design
 description: Create or update the project design system (DESIGN.md) with visual identity, colors, typography, and component guidelines.
 handoffs:
   - label: Build Technical Plan
-    agent: specway.plan
+    agent: specway.tech
     prompt: Create a plan for the spec. I am building with...
     send: true
 ---
@@ -113,14 +113,14 @@ If new needs are identified:
 
 If no new needs are found:
 - Report that the existing DESIGN.md covers the current feature's visual requirements
-- Suggest proceeding to `/specway.plan`
+- Suggest proceeding to `/specway.tech`
 
 ### Step 5: Report
 
 - Path to DESIGN.md
 - Summary of what was created or updated
 - List of design system sections defined
-- Suggested next command: `/specway.plan`
+- Suggested next command: `/specway.tech`
 
 ## Guidelines
 

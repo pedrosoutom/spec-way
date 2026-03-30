@@ -3,7 +3,7 @@ name: specway.clarify
 description: Identify underspecified areas in the current feature spec through up to 5 open-ended, conversational clarification questions and encoding answers back into the spec.
 handoffs: 
   - label: Build Technical Plan
-    agent: specway.plan
+    agent: specway.tech
     prompt: Create a plan for the spec. I am building with...
 ---
 
@@ -19,7 +19,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 Goal: Detect and reduce ambiguity or missing decision points in the active feature specification and record the clarifications directly in the spec file.
 
-Note: This clarification workflow is expected to run (and be completed) BEFORE invoking `/specway.plan`. If the user explicitly states they are skipping clarification (e.g., exploratory spike), you may proceed, but must warn that downstream rework risk increases.
+Note: This clarification workflow is expected to run (and be completed) BEFORE invoking `/specway.tech`. If the user explicitly states they are skipping clarification (e.g., exploratory spike), you may proceed, but must warn that downstream rework risk increases.
 
 Execution steps:
 
@@ -28,7 +28,7 @@ Execution steps:
    - Feature directory is at `specs/<branch-name>/` from repo root
      - If branch has a numeric prefix (e.g., `004-`), search `specs/` for a directory matching that prefix
    - Derive paths: FEATURE_SPEC = `<feature-dir>/spec.md`, IMPL_PLAN = `<feature-dir>/plan.md`, TASKS = `<feature-dir>/tasks.md`
-   - If FEATURE_SPEC does not exist, abort and instruct user to run `/specway.specify` first.
+   - If FEATURE_SPEC does not exist, abort and instruct user to run `/specway.product` first.
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
 2. Load the current spec file. Perform a structured ambiguity & coverage scan using this taxonomy. For each category, mark status: Clear / Partial / Missing. Produce an internal coverage map used for prioritization (do not output raw map unless no questions will be asked).
@@ -166,7 +166,7 @@ Execution steps:
    - Path to updated spec.
    - Sections touched (list names).
    - Coverage summary table listing each taxonomy category with Status: Resolved (was Partial/Missing and addressed), Deferred (exceeds question quota or better suited for planning), Clear (already sufficient), Outstanding (still Partial/Missing but low impact).
-   - If any Outstanding or Deferred remain, recommend whether to proceed to `/specway.plan` or run `/specway.clarify` again later post-plan.
+   - If any Outstanding or Deferred remain, recommend whether to proceed to `/specway.tech` or run `/specway.clarify` again later post-plan.
    - If the spec contains indications of UI/frontend work (user stories mention interface, screens, pages, visual components, dashboards, forms, or similar), include:
      `Suggested next: /specway.design — this feature involves UI. Consider defining or reviewing the project design system before planning.`
    - Suggested next command.
@@ -174,7 +174,7 @@ Execution steps:
 Behavior rules:
 
 - If no meaningful ambiguities found (or all potential questions would be low-impact), respond: "No critical ambiguities detected worth formal clarification." and suggest proceeding.
-- If spec file missing, instruct user to run `/specway.specify` first (do not create a new spec here).
+- If spec file missing, instruct user to run `/specway.product` first (do not create a new spec here).
 - Never exceed 5 total asked questions (clarification retries for a single question do not count as new questions).
 - Avoid speculative tech stack questions unless the absence blocks functional clarity.
 - Respect user early termination signals ("stop", "done", "proceed").

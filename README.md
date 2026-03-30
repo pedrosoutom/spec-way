@@ -9,7 +9,7 @@ A specification-driven development workflow for software projects, implemented a
 spec-way enforces a structured development flow where every feature starts as a natural language description and progresses through specification, planning, task generation, and implementation — with full traceability between artifacts.
 
 ```
-specway.specify → specway.clarify → [specway.design] → specway.plan → specway.tasks → specway.implement
+specway.product → specway.clarify → [specway.design] → specway.tech → specway.tasks → specway.implement
                                                                                      ↘ specway.taskstoissues
 ```
 
@@ -19,12 +19,11 @@ Optional: `/specway.design` (suggested when feature has UI), `/specway.analyze` 
 
 spec-way introduces several improvements over the original [Speckit](https://github.com/github/spec-kit) workflow:
 
-- **Discovery conversation**: `/specway.specify` detects when a project lacks context and initiates an open-ended conversation before generating the spec, capturing the user's vision, motivation, and constraints in their own words
+- **Skill-first architecture**: Everything is self-contained within `.claude/skills/` — no external directories or dependencies required
+- **Design system support**: `/specway.design` creates and maintains a project-level `DESIGN.md` with visual identity, colors, typography, and component guidelines — suggested automatically when features involve UI
+- **Discovery conversation**: `/specway.product` detects when a project lacks context and initiates an open-ended conversation before generating the spec, capturing the user's vision, motivation, and constraints in their own words
 - **Open-ended clarification**: `/specway.clarify` uses conversational questions with suggested approaches instead of rigid multiple-choice, encouraging richer user input while still providing orientation
 - **Batch spec updates**: Clarification answers are accumulated in memory and applied to the spec in a single write at the end, keeping the conversation flow uninterrupted
-- **Voice-friendly**: Both specify and clarify suggest `/voice` mode for faster, richer input
-- **Design system support**: `/specway.design` creates and maintains a project-level `DESIGN.md` with visual identity, colors, typography, and component guidelines — suggested automatically when features involve UI
-- **Skill-first architecture**: Everything is self-contained within `.claude/skills/` — no external directories or dependencies required
 
 ## Installation
 
@@ -65,7 +64,7 @@ Defines non-negotiable rules and principles for the project (e.g., mandatory TDD
 - Semantically versioned
 - Enforced during planning and analysis
 
-### `/specway.specify` — Feature Specification
+### `/specway.product` — Feature Specification
 
 Transforms a natural language description into a structured specification:
 
@@ -93,7 +92,7 @@ Creates or updates the project's `DESIGN.md` at the repository root:
 - Output follows the Stitch DESIGN.md convention (readable by both humans and AI agents)
 - Project-level artifact that persists across features
 
-### `/specway.plan` — Technical Plan
+### `/specway.tech` — Technical Plan
 
 Converts the spec into an implementation plan:
 
@@ -150,20 +149,20 @@ Each skill is self-contained with its own templates, scripts, and resources:
 
 ```
 .claude/skills/
-  specway.specify/
+  specway.product/
     SKILL.md                          # Skill instructions
     init-options.json                 # Branch numbering config
     templates/spec-template.md        # Spec structure template
     scripts/
       common.sh                       # Shared utilities (single source of truth)
       create-new-feature.sh           # Branch + directory creation
-  specway.plan/
+  specway.tech/
     SKILL.md
     templates/
       plan-template.md
       agent-file-template.md          # AI agent context template
     scripts/
-      setup-plan.sh                   # References common.sh from specway.specify
+      setup-plan.sh                   # References common.sh from specway.product
       update-agent-context.sh         # Multi-agent context updater
   specway.tasks/
     SKILL.md
@@ -207,7 +206,7 @@ specs/<branch-name>/
 2. Create a feature:
 
 ```
-/specway.specify I need an authentication system with email and password login
+/specway.product I need an authentication system with email and password login
 ```
 
 3. Follow the flow:
@@ -215,7 +214,7 @@ specs/<branch-name>/
 ```
 /specway.clarify
 /specway.design          # optional — suggested if feature has UI
-/specway.plan Using Python with FastAPI and PostgreSQL
+/specway.tech Using Python with FastAPI and PostgreSQL
 /specway.tasks
 /specway.implement
 ```

@@ -29,8 +29,8 @@ Identify inconsistencies, duplications, ambiguities, and underspecified items ac
 - Get current branch: run `git branch --show-current` (or use `$SPECIFY_FEATURE` env var if set)
 - Feature directory is at `specs/<branch-name>/` from repo root
   - If branch has a numeric prefix (e.g., `004-`), search `specs/` for a directory matching that prefix
-- Verify the feature directory exists (if not: ERROR — run `/specway.specify` first)
-- Verify `plan.md` exists (if not: ERROR — run `/specway.plan` first)
+- Verify the feature directory exists (if not: ERROR — run `/specway.product` first)
+- Verify `plan.md` exists (if not: ERROR — run `/specway.tech` first)
 - Verify `tasks.md` exists (if not: ERROR — run `/specway.tasks` first)
 - Derive absolute paths: SPEC = FEATURE_DIR/spec.md, PLAN = FEATURE_DIR/plan.md, TASKS = FEATURE_DIR/tasks.md
 
@@ -157,7 +157,7 @@ At end of report, output a concise Next Actions block:
 
 - If CRITICAL issues exist: Recommend resolving before `/specway.implement`
 - If only LOW/MEDIUM: User may proceed, but provide improvement suggestions
-- Provide explicit command suggestions: e.g., "Run /specway.specify with refinement", "Run /specway.plan to adjust architecture", "Manually edit tasks.md to add coverage for 'performance-metrics'"
+- Provide explicit command suggestions: e.g., "Run /specway.product with refinement", "Run /specway.tech to adjust architecture", "Manually edit tasks.md to add coverage for 'performance-metrics'"
 
 ### 8. Offer Remediation
 

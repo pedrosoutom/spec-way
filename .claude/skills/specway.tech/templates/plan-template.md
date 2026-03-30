@@ -3,7 +3,7 @@
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
-**Note**: This template is filled in by the `/specway.plan` command.
+**Note**: This template is filled in by the `/specway.tech` command.
 
 ## Summary
 
@@ -39,12 +39,12 @@
 
 ```text
 specs/[###-feature]/
-├── plan.md              # This file (/specway.plan command output)
-├── research.md          # Phase 0 output (/specway.plan command)
-├── data-model.md        # Phase 1 output (/specway.plan command)
-├── quickstart.md        # Phase 1 output (/specway.plan command)
-├── contracts/           # Phase 1 output (/specway.plan command)
-└── tasks.md             # Phase 2 output (/specway.tasks command - NOT created by /specway.plan)
+├── plan.md              # This file (/specway.tech command output)
+├── research.md          # Phase 0 output (/specway.tech command)
+├── data-model.md        # Phase 1 output (/specway.tech command)
+├── quickstart.md        # Phase 1 output (/specway.tech command)
+├── contracts/           # Phase 1 output (/specway.tech command)
+└── tasks.md             # Phase 2 output (/specway.tasks command - NOT created by /specway.tech)
 ```
 
 ### Source Code (repository root)
