@@ -9,11 +9,11 @@ A specification-driven development workflow for software projects, implemented a
 spec-way enforces a structured development flow where every feature starts as a natural language description and progresses through specification, planning, task generation, and implementation — with full traceability between artifacts.
 
 ```
-specway.specify → specway.clarify → specway.plan → specway.tasks → specway.implement
-                                                                  ↘ specway.taskstoissues
+specway.specify → specway.clarify → [specway.design] → specway.plan → specway.tasks → specway.implement
+                                                                                     ↘ specway.taskstoissues
 ```
 
-Optional at any point: `/specway.analyze` (consistency check) and `/specway.checklist` (requirements quality validation).
+Optional: `/specway.design` (suggested when feature has UI), `/specway.analyze` (consistency check), `/specway.checklist` (requirements quality validation).
 
 ## Changes from Speckit
 
@@ -23,6 +23,7 @@ spec-way introduces several improvements over the original [Speckit](https://git
 - **Open-ended clarification**: `/specway.clarify` uses conversational questions with suggested approaches instead of rigid multiple-choice, encouraging richer user input while still providing orientation
 - **Batch spec updates**: Clarification answers are accumulated in memory and applied to the spec in a single write at the end, keeping the conversation flow uninterrupted
 - **Voice-friendly**: Both specify and clarify suggest `/voice` mode for faster, richer input
+- **Design system support**: `/specway.design` creates and maintains a project-level `DESIGN.md` with visual identity, colors, typography, and component guidelines — suggested automatically when features involve UI
 - **Skill-first architecture**: Everything is self-contained within `.claude/skills/` — no external directories or dependencies required
 
 ## Installation
@@ -81,6 +82,16 @@ Analyzes the spec and identifies underspecified areas:
 - Up to 5 targeted questions, one at a time
 - Each answer is integrated directly into the spec
 - Prioritized by impact: scope > security > UX > technical details
+
+### `/specway.design` — Design System (optional)
+
+Creates or updates the project's `DESIGN.md` at the repository root:
+
+- Suggested automatically when a feature involves UI/frontend
+- Conversational discovery of visual identity, colors, typography, and components
+- If `DESIGN.md` already exists, refines it based on the current feature's needs
+- Output follows the Stitch DESIGN.md convention (readable by both humans and AI agents)
+- Project-level artifact that persists across features
 
 ### `/specway.plan` — Technical Plan
 
@@ -164,6 +175,7 @@ Each skill is self-contained with its own templates, scripts, and resources:
     SKILL.md
     memory/constitution.md            # Project principles (persistent)
     templates/constitution-template.md
+  specway.design/SKILL.md
   specway.implement/SKILL.md
   specway.clarify/SKILL.md
   specway.analyze/SKILL.md
@@ -202,6 +214,7 @@ specs/<branch-name>/
 
 ```
 /specway.clarify
+/specway.design          # optional — suggested if feature has UI
 /specway.plan Using Python with FastAPI and PostgreSQL
 /specway.tasks
 /specway.implement

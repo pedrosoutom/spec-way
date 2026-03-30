@@ -167,6 +167,8 @@ Execution steps:
    - Sections touched (list names).
    - Coverage summary table listing each taxonomy category with Status: Resolved (was Partial/Missing and addressed), Deferred (exceeds question quota or better suited for planning), Clear (already sufficient), Outstanding (still Partial/Missing but low impact).
    - If any Outstanding or Deferred remain, recommend whether to proceed to `/specway.plan` or run `/specway.clarify` again later post-plan.
+   - If the spec contains indications of UI/frontend work (user stories mention interface, screens, pages, visual components, dashboards, forms, or similar), include:
+     `Suggested next: /specway.design — this feature involves UI. Consider defining or reviewing the project design system before planning.`
    - Suggested next command.
 
 Behavior rules:
