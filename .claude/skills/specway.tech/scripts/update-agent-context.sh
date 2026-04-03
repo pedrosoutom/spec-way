@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Update agent context files with information from plan.md
+# Update agent context files with information from tech.md
 #
 # This script maintains AI agent context files by parsing feature specifications 
 # and updating agent-specific configuration files with project information.
@@ -8,11 +8,11 @@
 # MAIN FUNCTIONS:
 # 1. Environment Validation
 #    - Verifies git repository structure and branch information
-#    - Checks for required plan.md files and templates
+#    - Checks for required tech.md files and templates
 #    - Validates file permissions and accessibility
 #
 # 2. Plan Data Extraction
-#    - Parses plan.md files to extract project metadata
+#    - Parses tech.md files to extract project metadata
 #    - Identifies language/version, frameworks, databases, and project types
 #    - Handles missing or incomplete specification data gracefully
 #
@@ -57,7 +57,7 @@ _paths_output=$(get_feature_paths) || { echo "ERROR: Failed to resolve feature p
 eval "$_paths_output"
 unset _paths_output
 
-NEW_PLAN="$IMPL_PLAN"  # Alias for compatibility with existing code
+NEW_PLAN="$IMPL_TECH"  # Alias for compatibility with existing code
 AGENT_TYPE="${1:-}"
 
 # Agent-specific file paths  
@@ -145,9 +145,9 @@ validate_environment() {
         exit 1
     fi
     
-    # Check if plan.md exists
+    # Check if tech.md exists
     if [[ ! -f "$NEW_PLAN" ]]; then
-        log_error "No plan.md found at $NEW_PLAN"
+        log_error "No tech.md found at $NEW_PLAN"
         log_info "Make sure you're working on a feature with a corresponding spec directory"
         if [[ "$HAS_GIT" != "true" ]]; then
             log_info "Use: export SPECIFY_FEATURE=your-feature-name or create a new feature first"

@@ -61,18 +61,18 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Feature directory is at `specs/<branch-name>/` from repo root
      - If branch has a numeric prefix (e.g., `004-`), search `specs/` for a directory matching that prefix
    - Verify the feature directory exists (if not: ERROR — run `/specway.product` first)
-   - Verify `plan.md` exists in the feature directory (if not: ERROR — run `/specway.tech` first)
+   - Verify `tech.md` exists in the feature directory (if not: ERROR — run `/specway.tech` first)
    - Note which optional docs exist: `research.md`, `data-model.md`, `contracts/`, `quickstart.md`
    - All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
 2. **Load design documents**: Read from FEATURE_DIR:
-   - **Required**: plan.md (tech stack, libraries, structure), spec.md (user stories with priorities)
+   - **Required**: tech.md (tech stack, libraries, structure), product.md (user stories with priorities)
    - **Optional**: data-model.md (entities), contracts/ (interface contracts), research.md (decisions), quickstart.md (test scenarios)
    - Note: Not all projects have all documents. Generate tasks based on what's available.
 
 3. **Execute task generation workflow**:
-   - Load plan.md and extract tech stack, libraries, project structure
-   - Load spec.md and extract user stories with their priorities (P1, P2, P3, etc.)
+   - Load tech.md and extract tech stack, libraries, project structure
+   - Load product.md and extract user stories with their priorities (P1, P2, P3, etc.)
    - If data-model.md exists: Extract entities and map to user stories
    - If contracts/ exists: Map interface contracts to user stories
    - If research.md exists: Extract decisions for setup tasks
@@ -82,10 +82,10 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Validate task completeness (each user story has all needed tasks, independently testable)
 
 4. **Generate tasks.md**: Use `${CLAUDE_SKILL_DIR}/templates/tasks-template.md` as structure, fill with:
-   - Correct feature name from plan.md
+   - Correct feature name from tech.md
    - Phase 1: Setup tasks (project initialization)
    - Phase 2: Foundational tasks (blocking prerequisites for all user stories)
-   - Phase 3+: One phase per user story (in priority order from spec.md)
+   - Phase 3+: One phase per user story (in priority order from product.md)
    - Each phase includes: story goal, independent test criteria, tests (if requested), implementation tasks
    - Final Phase: Polish & cross-cutting concerns
    - All tasks must follow the strict checklist format (see Task Generation Rules below)
@@ -101,6 +101,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Independent test criteria for each story
    - Suggested MVP scope (typically just User Story 1)
    - Format validation: Confirm ALL tasks follow the checklist format (checkbox, ID, labels, file paths)
+   - Include: `💡 Tip: run /clear before /specway.implement to free up context window for implementation.`
 
 6. **Check for extension hooks**: After tasks.md is generated, check if `.specway/extensions.yml` exists in the project root.
    - If it exists, read it and look for entries under the `hooks.after_tasks` key
@@ -155,7 +156,7 @@ Every task MUST strictly follow this format:
 2. **Task ID**: Sequential number (T001, T002, T003...) in execution order
 3. **[P] marker**: Include ONLY if task is parallelizable (different files, no dependencies on incomplete tasks)
 4. **[Story] label**: REQUIRED for user story phase tasks only
-   - Format: [US1], [US2], [US3], etc. (maps to user stories from spec.md)
+   - Format: [US1], [US2], [US3], etc. (maps to user stories from product.md)
    - Setup phase: NO story label
    - Foundational phase: NO story label  
    - User Story phases: MUST have story label
@@ -175,7 +176,7 @@ Every task MUST strictly follow this format:
 
 ### Task Organization
 
-1. **From User Stories (spec.md)** - PRIMARY ORGANIZATION:
+1. **From User Stories (product.md)** - PRIMARY ORGANIZATION:
    - Each user story (P1, P2, P3...) gets its own phase
    - Map all related components to their story:
      - Models needed for that story

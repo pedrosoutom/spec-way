@@ -39,7 +39,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Feature directory is at `specs/<branch-name>/` from repo root
      - If branch has a numeric prefix (e.g., `004-`), search `specs/` for a directory matching that prefix
    - Verify the feature directory exists (if not: ERROR — run `/specway.product` first)
-   - Verify `plan.md` exists in the feature directory (if not: ERROR — run `/specway.tech` first)
+   - Verify `tech.md` exists in the feature directory (if not: ERROR — run `/specway.tech` first)
    - Note which optional docs exist: `research.md`, `data-model.md`, `contracts/`, `quickstart.md`, `tasks.md`
    - All file paths must be absolute.
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
@@ -83,8 +83,8 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Infer any missing context from spec/plan/tasks (do NOT hallucinate)
 
 4. **Load feature context**: Read from FEATURE_DIR:
-   - spec.md: Feature requirements and scope
-   - plan.md (if exists): Technical details, dependencies
+   - product.md: Feature requirements and scope
+   - tech.md (if exists): Technical details, dependencies
    - tasks.md (if exists): Implementation tasks
 
    **Context Loading Strategy**:

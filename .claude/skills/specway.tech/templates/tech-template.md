@@ -1,7 +1,7 @@
 # Implementation Plan: [FEATURE]
 
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Input**: Feature specification from `/specs/[###-feature-name]/product.md`
 
 **Note**: This template is filled in by the `/specway.tech` command.
 
@@ -39,7 +39,7 @@
 
 ```text
 specs/[###-feature]/
-├── plan.md              # This file (/specway.tech command output)
+├── tech.md              # This file (/specway.tech command output)
 ├── research.md          # Phase 0 output (/specway.tech command)
 ├── data-model.md        # Phase 1 output (/specway.tech command)
 ├── quickstart.md        # Phase 1 output (/specway.tech command)

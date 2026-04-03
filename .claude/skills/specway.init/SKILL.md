@@ -1,5 +1,5 @@
 ---
-name: specway.constitution
+name: specway.init
 description: Create or update the project constitution from interactive or provided principle inputs, ensuring all dependent templates stay in sync.
 handoffs: 
   - label: Build Specification
@@ -44,8 +44,8 @@ Follow this execution flow:
    - Ensure Governance section lists amendment procedure, versioning policy, and compliance review expectations.
 
 4. Consistency propagation checklist (convert prior checklist into active validations):
-   - Read `.claude/skills/specway.tech/templates/plan-template.md` and ensure any "Constitution Check" or rules align with updated principles.
-   - Read `.claude/skills/specway.product/templates/spec-template.md` for scope/requirements alignment—update if constitution adds/removes mandatory sections or constraints.
+   - Read `.claude/skills/specway.tech/templates/tech-template.md` and ensure any "Constitution Check" or rules align with updated principles.
+   - Read `.claude/skills/specway.product/templates/product-template.md` for scope/requirements alignment—update if constitution adds/removes mandatory sections or constraints.
    - Read `.claude/skills/specway.tasks/templates/tasks-template.md` and ensure task categorization reflects new or removed principle-driven task types (e.g., observability, versioning, testing discipline).
    - Read each skill file in `.claude/skills/specway.*/SKILL.md` to verify no outdated references (agent-specific names like CLAUDE only) remain when generic guidance is required.
    - Read any runtime guidance docs (e.g., `README.md`, `docs/quickstart.md`, or agent-specific guidance files if present). Update references to principles changed.

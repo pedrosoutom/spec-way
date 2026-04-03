@@ -21,7 +21,7 @@ spec-way introduces several improvements over the original [Speckit](https://git
 
 - **Skill-first architecture**: Everything is self-contained within `.claude/skills/` — no external directories or dependencies required
 - **Design system support**: `/specway.design` creates and maintains a project-level `DESIGN.md` with visual identity, colors, typography, and component guidelines — suggested automatically when features involve UI
-- **Discovery conversation**: `/specway.product` detects when a project lacks context and initiates an open-ended conversation before generating the spec, capturing the user's vision, motivation, and constraints in their own words
+- **Deep discovery conversation**: `/specway.product` conducts a mandatory, multi-round discovery conversation before generating the spec — probing the user's problem, vision, users, workflows, scope, and edge cases across at least 3 iterative rounds
 - **Open-ended clarification**: `/specway.clarify` uses conversational questions with suggested approaches instead of rigid multiple-choice, encouraging richer user input while still providing orientation
 - **Batch spec updates**: Clarification answers are accumulated in memory and applied to the spec in a single write at the end, keeping the conversation flow uninterrupted
 
@@ -57,7 +57,7 @@ cp -r /tmp/spec-way/.claude/skills/specway.* your-project/.claude/skills/
 
 ## Skills
 
-### `/specway.constitution` — Project Principles
+### `/specway.init` — Project Principles
 
 Defines non-negotiable rules and principles for the project (e.g., mandatory TDD, simplicity, observability). Acts as a constitution that all other skills validate against.
 
@@ -68,6 +68,8 @@ Defines non-negotiable rules and principles for the project (e.g., mandatory TDD
 
 Transforms a natural language description into a structured specification:
 
+- Mandatory deep discovery conversation (multi-round, at least 3 rounds) before spec generation
+- Maps existing project context (CLAUDE.md, repo structure, dependencies)
 - Creates a feature branch and directory structure under `specs/`
 - Prioritized user stories (P1, P2, P3) with acceptance scenarios
 - Testable functional requirements
@@ -121,7 +123,7 @@ Executes the tasks defined in `tasks.md`:
 
 ### `/specway.analyze` — Consistency Analysis
 
-Read-only analysis across `spec.md`, `plan.md`, and `tasks.md`:
+Read-only analysis across `product.md`, `tech.md`, and `tasks.md`:
 
 - Detects duplications, ambiguities, and coverage gaps
 - Validates alignment with the constitution
@@ -152,14 +154,14 @@ Each skill is self-contained with its own templates, scripts, and resources:
   specway.product/
     SKILL.md                          # Skill instructions
     init-options.json                 # Branch numbering config
-    templates/spec-template.md        # Spec structure template
+    templates/product-template.md      # Product spec structure template
     scripts/
       common.sh                       # Shared utilities (single source of truth)
       create-new-feature.sh           # Branch + directory creation
   specway.tech/
     SKILL.md
     templates/
-      plan-template.md
+      tech-template.md
       agent-file-template.md          # AI agent context template
     scripts/
       setup-plan.sh                   # References common.sh from specway.product
@@ -170,7 +172,7 @@ Each skill is self-contained with its own templates, scripts, and resources:
   specway.checklist/
     SKILL.md
     templates/checklist-template.md
-  specway.constitution/
+  specway.init/
     SKILL.md
     memory/constitution.md            # Project principles (persistent)
     templates/constitution-template.md
@@ -185,8 +187,8 @@ Per-feature artifacts are generated under:
 
 ```
 specs/<branch-name>/
-  spec.md              # Feature specification
-  plan.md              # Technical plan
+  product.md           # Feature specification
+  tech.md              # Technical plan
   research.md          # Phase 0 research
   data-model.md        # Data model
   contracts/           # Interface contracts
@@ -200,7 +202,7 @@ specs/<branch-name>/
 1. (Optional) Configure the project constitution:
 
 ```
-/specway.constitution Define 3 principles: simplicity, test-first, observability
+/specway.init Define 3 principles: simplicity, test-first, observability
 ```
 
 2. Create a feature:

@@ -55,11 +55,15 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-1. **Setup**: Run `${CLAUDE_SKILL_DIR}/scripts/setup-plan.sh --json --template "${CLAUDE_SKILL_DIR}/templates/plan-template.md"` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Setup**: Run `${CLAUDE_SKILL_DIR}/scripts/setup-plan.sh --json --template "${CLAUDE_SKILL_DIR}/templates/tech-template.md"` from repo root and parse JSON for FEATURE_PRODUCT, IMPL_TECH, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
-2. **Load context**: Read FEATURE_SPEC and `.claude/skills/specway.constitution/memory/constitution.md`. Load IMPL_PLAN template (already copied). If `DESIGN.md` exists at the project root, read it for visual design context and component guidelines — use it to inform framework and UI library decisions.
+2. **Load context**: Read FEATURE_PRODUCT and `.claude/skills/specway.init/memory/constitution.md`. Load IMPL_TECH template (already copied). If `DESIGN.md` exists at the project root, read it for visual design context and component guidelines — use it to inform framework and UI library decisions.
+   - **Existing project context** (critical when the project already has code):
+     - If `CLAUDE.md` (or equivalent: `AGENTS.md`, `GEMINI.md`, etc.) exists at the repo root, read it to understand the active tech stack, project structure, coding conventions, and build/test commands — use this to pre-fill Technical Context fields and avoid proposing conflicting technology choices
+     - Scan the repository top-level structure and key dependency manifests (`package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, etc.) to validate and complement the information from the agent context file
+     - When the project has existing source code, the plan MUST align with the established architecture — do not propose a different project structure or tech stack unless the spec explicitly requires it
 
-3. **Execute plan workflow**: Follow the structure in IMPL_PLAN template to:
+3. **Execute plan workflow**: Follow the structure in IMPL_TECH template to:
    - Fill Technical Context (mark unknowns as "NEEDS CLARIFICATION")
    - Fill Constitution Check section from constitution
    - Evaluate gates (ERROR if violations unjustified)
@@ -67,7 +71,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Phase 1: Generate data-model.md, contracts/, quickstart.md, and update agent context by running the agent script
    - Re-evaluate Constitution Check post-design
 
-4. **Stop and report**: Command ends after Phase 1 design. Phase 2 (task generation) is handled by `/specway.tasks`. Report branch, IMPL_PLAN path, and generated artifacts.
+4. **Stop and report**: Command ends after Phase 1 design. Phase 2 (task generation) is handled by `/specway.tasks`. Report branch, IMPL_TECH path, and generated artifacts.
 
 5. **Check for extension hooks**: After reporting, check if `.specway/extensions.yml` exists in the project root.
    - If it exists, read it and look for entries under the `hooks.after_plan` key

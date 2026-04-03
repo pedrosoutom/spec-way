@@ -52,7 +52,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Feature directory is at `specs/<branch-name>/` from repo root
      - If branch has a numeric prefix (e.g., `004-`), search `specs/` for a directory matching that prefix
    - Verify the feature directory exists (if not: ERROR — run `/specway.product` first)
-   - Verify `plan.md` exists in the feature directory (if not: ERROR — run `/specway.tech` first)
+   - Verify `tech.md` exists in the feature directory (if not: ERROR — run `/specway.tech` first)
    - Verify `tasks.md` exists in the feature directory (if not: ERROR — run `/specway.tasks` first)
    - Note which optional docs exist: `research.md`, `data-model.md`, `contracts/`, `quickstart.md`, `tasks.md`
    - All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
@@ -90,7 +90,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 3. Load and analyze the implementation context:
    - **REQUIRED**: Read tasks.md for the complete task list and execution plan
-   - **REQUIRED**: Read plan.md for tech stack, architecture, and file structure
+   - **REQUIRED**: Read tech.md for tech stack, architecture, and file structure
    - **IF EXISTS**: Read data-model.md for entities and relationships
    - **IF EXISTS**: Read contracts/ for API specifications and test requirements
    - **IF EXISTS**: Read research.md for technical decisions and constraints
@@ -107,7 +107,7 @@ You **MUST** consider the user input before proceeding (if not empty).
      git rev-parse --git-dir 2>/dev/null
      ```
 
-   - Check if Dockerfile* exists or Docker in plan.md → create/verify .dockerignore
+   - Check if Dockerfile* exists or Docker in tech.md → create/verify .dockerignore
    - Check if .eslintrc* exists → create/verify .eslintignore
    - Check if eslint.config.* exists → ensure the config's `ignores` entries cover required patterns
    - Check if .prettierrc* exists → create/verify .prettierignore
@@ -118,7 +118,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    **If ignore file already exists**: Verify it contains essential patterns, append missing critical patterns only
    **If ignore file missing**: Create with full pattern set for detected technology
 
-   **Common Patterns by Technology** (from plan.md tech stack):
+   **Common Patterns by Technology** (from tech.md tech stack):
    - **Node.js/JavaScript/TypeScript**: `node_modules/`, `dist/`, `build/`, `*.log`, `.env*`
    - **Python**: `__pycache__/`, `*.pyc`, `.venv/`, `venv/`, `dist/`, `*.egg-info/`
    - **Java**: `target/`, `*.class`, `*.jar`, `.gradle/`, `build/`

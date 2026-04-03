@@ -55,52 +55,84 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Discovery Conversation
 
-Before generating a spec, assess whether a discovery conversation is needed to capture the user's full vision.
+**Discovery is a mandatory, in-depth phase.** Do NOT rush through it. Do NOT skip it. The quality of the entire downstream workflow (spec, plan, tasks, implementation) depends on the depth of understanding built here. A shallow discovery produces a shallow spec, which cascades into poor plans and wasted implementation effort.
+
+The goal is to reach a point where you could explain the feature to a new team member in complete detail — the problem, the users, the workflows, and the boundaries — before writing a single line of spec.
+
+**IMPORTANT**: Discovery is about understanding the WHAT and WHY — user problems, outcomes, and boundaries. Do NOT discuss technical implementation, database schemas, or architecture here. That belongs in `/specway.tech`. Keep language simple and focused on user outcomes.
 
 ### Step 1: Assess project context
 
-- Check if `.claude/skills/specway.constitution/memory/constitution.md` has been filled in (does NOT still contain `[PROJECT_NAME]` placeholder tokens)
+- Check if `.claude/skills/specway.init/memory/constitution.md` has been filled in (does NOT still contain `[PROJECT_NAME]` placeholder tokens)
 - Check if any specs exist under `specs/` directory in the repo root
 - Check if a `README.md` exists at the repo root with substantive content (more than boilerplate)
-- Classify context as:
-  - **rich**: constitution filled AND existing specs
-  - **partial**: some context but not all
-  - **minimal**: no constitution, no specs, no meaningful README
+- **Map existing project** (critical when joining a project mid-flight):
+  - Check if `CLAUDE.md` (or equivalent agent context file: `AGENTS.md`, `GEMINI.md`, etc.) exists at the repo root — if so, read it to absorb project conventions and context
+  - Run a quick repo structure scan (`ls` of top-level directories and key files) to understand the codebase layout
+  - Check for package/dependency manifests (`package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, `Gemfile`, `pom.xml`, etc.) to identify what exists
+  - If the project has existing source code but no specway artifacts yet, treat it as an **established project onboarding** — the spec should respect and reference the existing product rather than assuming greenfield
 
-### Step 2: Decide whether to trigger discovery
+This context informs the discovery conversation but does NOT replace it — even projects with rich context need deep feature-level discovery.
 
-- **Trigger discovery** if context is `minimal` or `partial` AND the user's input is a short description (roughly one sentence / under ~50 words)
-- **Skip discovery** if context is `rich` OR the user provided a lengthy briefing (~100+ words with detailed context)
-- Use judgment — these are guidelines, not rigid thresholds
+### Step 2: Open the discovery conversation
 
-### Step 3: Discovery conversation (when triggered)
+**Always start discovery.** There is no skip condition. Even if the user provided a detailed briefing, the discovery conversation is where you probe deeper, uncover assumptions, and build shared understanding.
 
-Acknowledge the user's description and explain that before generating a full spec, it would help to understand more about their vision.
+Acknowledge the user's description and explain the process briefly:
 
-Suggest: *"If you'd like, you can use `/voice` to talk through your thinking — it's often faster for explaining context."*
+*"Before I generate the spec, I'd like to understand your feature in depth through a few rounds of questions. This conversation is the foundation for everything that follows, so take your time."*
 
-Present a guiding structure with open-ended topics and example responses. Explicitly say: **"You don't need to address all of these — share what feels relevant. Write freely, in any order."**
+### Step 3: Iterative deep-dive (multi-round)
 
-Suggested topics:
+Conduct the discovery as an **iterative conversation** with multiple rounds. Present **2–3 questions per round**, wait for the user's response, analyze what was said, identify gaps, and ask follow-up questions in the next round.
 
-- **The problem / motivation**: "What problem does this solve? Who experiences it today?"
-  *(Example: "Our users currently have to manually export data to CSV, which takes 20 minutes per report...")*
-- **The vision**: "What does success look like when this is done?"
-  *(Example: "Users click one button and get a PDF report in their inbox within 30 seconds")*
-- **The users**: "Who will use this, and how? Any distinct user types?"
-  *(Example: "Admin users configure reports, regular users just receive them")*
-- **Scope and boundaries**: "What's explicitly in or out of scope for this version?"
-  *(Example: "V1 is email delivery only, no Slack integration yet")*
-- **Constraints or preferences**: "Anything the solution must or must not do?"
-  *(Example: "Must work offline, must not require a new database")*
-- **Existing context**: "Any related systems, past decisions, or prior art?"
-  *(Example: "We already have a reporting engine that generates the data, just not the delivery part")*
+**Do NOT present all questions at once.** Each round builds on the previous one, going deeper based on what the user revealed.
 
-Wait for the user's response. Their input (which may be long, unstructured, conversational) becomes the **enriched context** that feeds into spec generation.
+**What you need to understand by the end** — use these as a mental checklist, not a rigid script. Adapt your questions to the feature and the conversation flow:
 
-### Step 4: Synthesize discovery input
+- The **problem** being solved and why it matters now
+- Who the **users** are and how their needs differ
+- The **user journeys** — step by step, what the user actually does
+- What is **in scope** and what is explicitly **out of scope**
+- What **success** looks like from the user's perspective
+- **Edge cases** — what happens when things go wrong or hit limits
 
-After receiving the user's discovery response, internally synthesize it into a structured summary that maps to spec template sections. Do not show this summary to the user — use it to generate a richer spec.
+**How to conduct the rounds:**
+
+- Start broad (problem, vision, users) and progressively narrow (workflows, boundaries, edge cases)
+- Ask open-ended questions that invite explanation, not yes/no answers
+- When the user gives a short or vague answer, probe deeper: *"You mentioned [X] — can you tell me more about what that looks like in practice?"*
+- Reflect back your understanding periodically: *"So if I understand correctly, [summary] — is that right?"*
+- When the user says "I don't know", note it as an open question for the spec
+- If the user seems eager to skip ahead: *"A few more questions will save us significant rework later."*
+- Keep language simple and focused on user outcomes — avoid technical jargon
+
+**Minimum depth:**
+
+- At least **3 rounds** of questions before proceeding
+- Up to **6 rounds** for complex features
+- End only when you can fill every spec section with substantive content, not placeholders
+
+### Step 4: Summary & confirmation
+
+Present a brief discovery summary to the user:
+
+```markdown
+## Discovery Summary
+
+Here's what I've captured from our conversation:
+
+- **Problem**: [1-2 sentences]
+- **Vision**: [1-2 sentences]
+- **Primary users**: [who]
+- **Key workflows**: [main flows identified]
+- **Scope**: [in] / [out]
+- **Open questions**: [any remaining unknowns]
+
+Does this capture the essence of what you want to build? Anything to add or correct before I generate the spec?
+```
+
+Wait for the user's confirmation or corrections. Only after confirmation, proceed to the Outline (spec generation).
 
 ---
 
@@ -108,7 +140,7 @@ After receiving the user's discovery response, internally synthesize it into a s
 
 The text the user typed after `/specway.product` in the triggering message **is** the feature description. Assume you always have it available in this conversation even if `$ARGUMENTS` appears literally below. Do not ask the user to repeat it unless they provided an empty command.
 
-Given that feature description (and discovery conversation input, if conducted), do this:
+Given that feature description and the discovery conversation input, do this:
 
 1. **Generate a concise short name** (2-4 words) for the branch:
    - Analyze the feature description and extract the most meaningful keywords
@@ -128,26 +160,26 @@ Given that feature description (and discovery conversation input, if conducted),
    - If `"timestamp"`, add `--timestamp` (Bash) or `-Timestamp` (PowerShell) to the script invocation
    - If `"sequential"` or absent, do not add any extra flag (default behavior)
 
-   - Bash example: `${CLAUDE_SKILL_DIR}/scripts/create-new-feature.sh "$ARGUMENTS" --json --template "${CLAUDE_SKILL_DIR}/templates/spec-template.md" --short-name "user-auth" "Add user authentication"`
-   - Bash (timestamp): `${CLAUDE_SKILL_DIR}/scripts/create-new-feature.sh "$ARGUMENTS" --json --timestamp --template "${CLAUDE_SKILL_DIR}/templates/spec-template.md" --short-name "user-auth" "Add user authentication"`
-   - PowerShell example: `${CLAUDE_SKILL_DIR}/scripts/create-new-feature.sh "$ARGUMENTS" -Json --template "${CLAUDE_SKILL_DIR}/templates/spec-template.md" -ShortName "user-auth" "Add user authentication"`
-   - PowerShell (timestamp): `${CLAUDE_SKILL_DIR}/scripts/create-new-feature.sh "$ARGUMENTS" -Json -Timestamp --template "${CLAUDE_SKILL_DIR}/templates/spec-template.md" -ShortName "user-auth" "Add user authentication"`
+   - Bash example: `${CLAUDE_SKILL_DIR}/scripts/create-new-feature.sh "$ARGUMENTS" --json --template "${CLAUDE_SKILL_DIR}/templates/product-template.md" --short-name "user-auth" "Add user authentication"`
+   - Bash (timestamp): `${CLAUDE_SKILL_DIR}/scripts/create-new-feature.sh "$ARGUMENTS" --json --timestamp --template "${CLAUDE_SKILL_DIR}/templates/product-template.md" --short-name "user-auth" "Add user authentication"`
+   - PowerShell example: `${CLAUDE_SKILL_DIR}/scripts/create-new-feature.sh "$ARGUMENTS" -Json --template "${CLAUDE_SKILL_DIR}/templates/product-template.md" -ShortName "user-auth" "Add user authentication"`
+   - PowerShell (timestamp): `${CLAUDE_SKILL_DIR}/scripts/create-new-feature.sh "$ARGUMENTS" -Json -Timestamp --template "${CLAUDE_SKILL_DIR}/templates/product-template.md" -ShortName "user-auth" "Add user authentication"`
 
    **IMPORTANT**:
    - Do NOT pass `--number` — the script determines the correct next number automatically
    - Always include the JSON flag (`--json` for Bash, `-Json` for PowerShell) so the output can be parsed reliably
    - You must only ever run this script once per feature
    - The JSON is provided in the terminal as output - always refer to it to get the actual content you're looking for
-   - The JSON output will contain BRANCH_NAME and SPEC_FILE paths
+   - The JSON output will contain BRANCH_NAME and PRODUCT_FILE paths
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot")
 
-3. Load `${CLAUDE_SKILL_DIR}/templates/spec-template.md` to understand required sections.
+3. Load `${CLAUDE_SKILL_DIR}/templates/product-template.md` to understand required sections.
 
 4. Follow this execution flow:
 
     1. Parse user description from Input
        If empty: ERROR "No feature description provided"
-    2. Extract key concepts from description AND discovery conversation input (if conducted)
+    2. Extract key concepts from description AND discovery conversation input
        Identify: actors, actions, data, constraints
        Prioritize information the user explicitly provided over inferred defaults
     3. For unclear aspects:
@@ -157,7 +189,7 @@ Given that feature description (and discovery conversation input, if conducted),
          - Multiple reasonable interpretations exist with different implications
          - No reasonable default exists
        - **LIMIT: Maximum 3 [NEEDS CLARIFICATION] markers total**
-       - If a discovery conversation was conducted, the threshold for [NEEDS CLARIFICATION] should be higher — the user has already provided rich context, so fewer ambiguities should remain
+       - Since the discovery conversation has already provided rich context, the threshold for [NEEDS CLARIFICATION] should be high — fewer ambiguities should remain after deep discovery
        - Prioritize clarifications by impact: scope > security/privacy > user experience > technical details
     4. Fill User Scenarios & Testing section
        If no clear user flow: ERROR "Cannot determine user scenarios"
@@ -171,7 +203,7 @@ Given that feature description (and discovery conversation input, if conducted),
     7. Identify Key Entities (if data involved)
     8. Return: SUCCESS (spec ready for planning)
 
-5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) and discovery conversation (if conducted) while preserving section order and headings. If a discovery conversation was conducted, include a `## Discovery Context` section in the spec (after the header metadata, before User Scenarios) that summarizes the key points from the user's discovery input — their motivation, vision, constraints, and any context they shared. This section serves as a reference for the user's original intent throughout the development process.
+5. Write the specification to PRODUCT_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) and the discovery conversation while preserving section order and headings. Include a `## Discovery Context` section in the spec (after the header metadata, before User Scenarios) that summarizes the key points from the user's discovery input — their motivation, vision, constraints, and any context they shared. This section serves as a reference for the user's original intent throughout the development process.
 
 6. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
 
@@ -182,7 +214,7 @@ Given that feature description (and discovery conversation input, if conducted),
       
       **Purpose**: Validate specification completeness and quality before proceeding to planning
       **Created**: [DATE]
-      **Feature**: [Link to spec.md]
+      **Feature**: [Link to product.md]
       
       ## Content Quality
       

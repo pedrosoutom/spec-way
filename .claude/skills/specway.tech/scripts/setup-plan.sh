@@ -49,31 +49,31 @@ mkdir -p "$FEATURE_DIR"
 
 # Copy plan template if it exists
 if [[ -n "$TEMPLATE_PATH" ]] && [[ -f "$TEMPLATE_PATH" ]]; then
-    cp "$TEMPLATE_PATH" "$IMPL_PLAN"
-    echo "Copied plan template to $IMPL_PLAN"
+    cp "$TEMPLATE_PATH" "$IMPL_TECH"
+    echo "Copied plan template to $IMPL_TECH"
 else
     echo "Warning: Plan template not found"
     # Create a basic plan file if template doesn't exist
-    touch "$IMPL_PLAN"
+    touch "$IMPL_TECH"
 fi
 
 # Output results
 if $JSON_MODE; then
     if has_jq; then
         jq -cn \
-            --arg feature_spec "$FEATURE_SPEC" \
-            --arg impl_plan "$IMPL_PLAN" \
+            --arg feature_product "$FEATURE_PRODUCT" \
+            --arg impl_tech "$IMPL_TECH" \
             --arg specs_dir "$FEATURE_DIR" \
             --arg branch "$CURRENT_BRANCH" \
             --arg has_git "$HAS_GIT" \
-            '{FEATURE_SPEC:$feature_spec,IMPL_PLAN:$impl_plan,SPECS_DIR:$specs_dir,BRANCH:$branch,HAS_GIT:$has_git}'
+            '{FEATURE_PRODUCT:$feature_product,IMPL_TECH:$impl_tech,SPECS_DIR:$specs_dir,BRANCH:$branch,HAS_GIT:$has_git}'
     else
-        printf '{"FEATURE_SPEC":"%s","IMPL_PLAN":"%s","SPECS_DIR":"%s","BRANCH":"%s","HAS_GIT":"%s"}\n' \
-            "$(json_escape "$FEATURE_SPEC")" "$(json_escape "$IMPL_PLAN")" "$(json_escape "$FEATURE_DIR")" "$(json_escape "$CURRENT_BRANCH")" "$(json_escape "$HAS_GIT")"
+        printf '{"FEATURE_PRODUCT":"%s","IMPL_TECH":"%s","SPECS_DIR":"%s","BRANCH":"%s","HAS_GIT":"%s"}\n' \
+            "$(json_escape "$FEATURE_PRODUCT")" "$(json_escape "$IMPL_TECH")" "$(json_escape "$FEATURE_DIR")" "$(json_escape "$CURRENT_BRANCH")" "$(json_escape "$HAS_GIT")"
     fi
 else
-    echo "FEATURE_SPEC: $FEATURE_SPEC"
-    echo "IMPL_PLAN: $IMPL_PLAN" 
+    echo "FEATURE_PRODUCT: $FEATURE_PRODUCT"
+    echo "IMPL_TECH: $IMPL_TECH"
     echo "SPECS_DIR: $FEATURE_DIR"
     echo "BRANCH: $CURRENT_BRANCH"
     echo "HAS_GIT: $HAS_GIT"

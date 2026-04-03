@@ -25,7 +25,7 @@ Goal: Create or refine the project's design system document (`DESIGN.md` at the 
 - Get current branch: run `git branch --show-current` (or use `$SPECIFY_FEATURE` env var if set)
 - Feature directory is at `specs/<branch-name>/` from repo root
   - If branch has a numeric prefix (e.g., `004-`), search `specs/` for a directory matching that prefix
-- Read `spec.md` from the feature directory to understand the current feature's context
+- Read `product.md` from the feature directory to understand the current feature's context
 - If no feature branch is active, the skill can still run to create a general project DESIGN.md
 
 ### Step 2: Detect existing DESIGN.md
@@ -36,7 +36,7 @@ Goal: Create or refine the project's design system document (`DESIGN.md` at the 
 
 ### Step 3: Creation Mode
 
-Read `spec.md` (if available) to understand the product and feature context.
+Read `product.md` (if available) to understand the product and feature context.
 
 Start a conversation with the user to understand the project's visual identity. Suggest: *"If you'd like, you can use `/voice` to talk through your design vision — it's often easier to describe visual preferences out loud."*
 
@@ -99,7 +99,7 @@ Proceed to step 5.
 
 ### Step 4: Refinement Mode
 
-Read the existing `DESIGN.md` from the project root. Read `spec.md` from the current feature directory.
+Read the existing `DESIGN.md` from the project root. Read `product.md` from the current feature directory.
 
 Analyze whether the current feature introduces visual needs not covered by the existing design system:
 - New component types (e.g., feature needs data tables but DESIGN.md only covers cards)

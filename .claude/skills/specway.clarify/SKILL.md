@@ -27,8 +27,8 @@ Execution steps:
    - Get current branch: run `git branch --show-current` (or use `$SPECIFY_FEATURE` env var if set)
    - Feature directory is at `specs/<branch-name>/` from repo root
      - If branch has a numeric prefix (e.g., `004-`), search `specs/` for a directory matching that prefix
-   - Derive paths: FEATURE_SPEC = `<feature-dir>/spec.md`, IMPL_PLAN = `<feature-dir>/plan.md`, TASKS = `<feature-dir>/tasks.md`
-   - If FEATURE_SPEC does not exist, abort and instruct user to run `/specway.product` first.
+   - Derive paths: FEATURE_PRODUCT = `<feature-dir>/product.md`, IMPL_TECH = `<feature-dir>/tech.md`, TASKS = `<feature-dir>/tasks.md`
+   - If FEATURE_PRODUCT does not exist, abort and instruct user to run `/specway.product` first.
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
 2. Load the current spec file. Perform a structured ambiguity & coverage scan using this taxonomy. For each category, mark status: Clear / Partial / Missing. Produce an internal coverage map used for prioritization (do not output raw map unless no questions will be asked).
@@ -116,7 +116,6 @@ Execution steps:
        Based on the spec context, **[Approach X]** seems most aligned because [reason].
 
        Feel free to pick one of these, combine them, or describe your own approach entirely.
-       You can also use `/voice` to talk through your thinking.
        ```
 
     - After the user answers:
@@ -159,7 +158,7 @@ Execution steps:
    - Markdown structure valid; only allowed new headings: `## Clarifications`, `### Session YYYY-MM-DD`.
    - Terminology consistency: same canonical term used across all updated sections.
 
-7. Write the updated spec back to `FEATURE_SPEC` (single write after all clarifications are applied).
+7. Write the updated spec back to `FEATURE_PRODUCT` (single write after all clarifications are applied).
 
 8. Report completion (after questioning loop ends or early termination):
    - Number of questions asked & answered.
